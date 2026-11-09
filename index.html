@@ -1,0 +1,384 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <title>The Monkey AIsland — The Agile Monkeys</title>
+    <meta
+      name="description"
+      content="A point-and-click adventure where you try to become the greatest engineer of all time. Built by The Agile Monkeys, who are, coincidentally, hiring."
+    />
+    <meta name="theme-color" content="#05060f" />
+
+    <link rel="canonical" href="https://monkeyaisland.theagilemonkeys.com/" />
+
+    <!-- Link previews (Open Graph: LinkedIn, Slack, WhatsApp, Facebook…; X
+         reads these too once it knows the card type). Crawlers need absolute
+         URLs. The image is the title card, rendered by `npm run social-card`:
+         rerun it when the title card changes. -->
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="The Agile Monkeys" />
+    <meta property="og:locale" content="en_US" />
+    <meta property="og:url" content="https://monkeyaisland.theagilemonkeys.com/" />
+    <meta property="og:title" content="The Monkey AIsland" />
+    <meta
+      property="og:description"
+      content="You want to be the greatest engineer of all time? Talk to the lookout. Walk the dock. Survive El Patilla. The Agile Monkeys are hiring."
+    />
+    <meta property="og:image" content="https://monkeyaisland.theagilemonkeys.com/social-card.png" />
+    <meta property="og:image:type" content="image/png" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta
+      property="og:image:alt"
+      content="Pixel-art title card: 'The Agile Monkeys present The Monkey AIsland' over a moonlit sea at night, with palm trees and a volcano on the horizon."
+    />
+    <meta name="twitter:card" content="summary_large_image" />
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Crect width='16' height='16' fill='%2305060f'/%3E%3Crect x='3' y='3' width='4' height='4' fill='%23f5b942'/%3E%3Crect x='9' y='9' width='4' height='4' fill='%237cbb60'/%3E%3C/svg%3E" />
+
+    <!-- Start pulling the theme down while the title screen paints, so the
+         music is decoded and ready the instant the player clicks. -->
+    <link rel="preload" as="fetch" crossorigin="anonymous"
+      href="./audio/main-theme.mp3" />
+
+    <style>
+      :root {
+        --ink: #f4f0d8;
+        --dim: #8b8496;
+        --amber: #f5b942;
+        --amber-dark: #b4550f;
+        --parchment: #d9ae7f;
+        --wood: #45291a;
+        --wood-dark: #2e1d10;
+        --night: #05060f;
+        --mono: ui-monospace, "SF Mono", SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace;
+      }
+
+      * { box-sizing: border-box; }
+
+      html, body {
+        margin: 0;
+        padding: 0;
+        height: 100%;
+        height: 100dvh;
+        background: var(--night);
+        color: var(--ink);
+        font-family: var(--mono);
+        overflow: hidden;
+        overscroll-behavior: none;
+        -webkit-text-size-adjust: 100%;
+      }
+
+      #stage {
+        position: fixed;
+        inset: 0;
+        width: 100dvw;
+        height: 100dvh;
+        padding:
+          env(safe-area-inset-top, 0)
+          env(safe-area-inset-right, 0)
+          env(safe-area-inset-bottom, 0)
+          env(safe-area-inset-left, 0);
+        background:
+          radial-gradient(ellipse at 50% 40%, #0d1426 0%, #05060f 70%, #000 100%);
+      }
+
+      #game-viewport {
+        width: 100%;
+        height: 100%;
+        display: grid;
+        place-items: center;
+        min-width: 0;
+        min-height: 0;
+      }
+
+      /* The game canvas: 320x200 logical, CSS-scaled by JS. */
+      #screen {
+        display: block;
+        image-rendering: pixelated;
+        image-rendering: crisp-edges;
+        background: #000;
+        touch-action: none;
+        cursor: none;
+        box-shadow: 0 0 0 2px #000, 0 0 40px 6px rgba(0, 0, 0, 0.8);
+      }
+      /* When the OS/browser can't do a custom canvas cursor nicely (touch), fall back. */
+      body.touch #screen { cursor: default; }
+
+      /* ------- DOM overlay layer (interstitials + the privacy panel) -------- */
+      #overlay {
+        position: fixed;
+        inset: 0;
+        display: none;
+        place-items: center;
+        background: #000;
+        padding:
+          max(4vmin, env(safe-area-inset-top, 0px))
+          max(4vmin, env(safe-area-inset-right, 0px))
+          max(4vmin, env(safe-area-inset-bottom, 0px))
+          max(4vmin, env(safe-area-inset-left, 0px));
+        overflow-y: auto;
+        z-index: 10;
+      }
+      #overlay.on { display: grid; }
+
+      .ovl-inner {
+        width: min(72ch, 100%);
+        margin: auto;
+      }
+
+      /* The classic "black screen with a Continue" beat. */
+      .interstitial {
+        text-align: center;
+        color: var(--ink);
+        line-height: 1.8;
+        font-size: clamp(13px, 2.1vmin, 19px);
+      }
+      .interstitial .kicker {
+        color: var(--dim);
+        text-transform: uppercase;
+        letter-spacing: 0.25em;
+        font-size: 0.72em;
+        margin-bottom: 2.5em;
+      }
+      .interstitial p { margin: 0 0 1.2em; }
+      .interstitial .aside { color: var(--dim); font-size: 0.85em; }
+      .interstitial .actions { display: flex; gap: 1.2em; align-items: center; justify-content: center; flex-wrap: wrap; margin-top: 2.2em; }
+      .interstitial .actions .mi-btn { margin-top: 0; }
+      .interstitial .note { margin-top: 1.2em; color: var(--dim); font-size: 0.85em; }
+
+      .mi-btn {
+        appearance: none;
+        display: inline-block;
+        margin-top: 2.2em;
+        padding: 0.7em 2.2em;
+        font-family: var(--mono);
+        font-size: 1em;
+        letter-spacing: 0.14em;
+        text-transform: uppercase;
+        color: var(--night);
+        background: var(--amber);
+        border: 2px solid #ffe08a;
+        border-radius: 2px;
+        cursor: pointer;
+        box-shadow: 3px 3px 0 var(--amber-dark);
+        text-decoration: none;
+      }
+      .mi-btn:hover { background: #ffe08a; }
+      .mi-btn:active { transform: translate(2px, 2px); box-shadow: 1px 1px 0 var(--amber-dark); }
+      .mi-btn:focus-visible { outline: 3px solid #7cbb60; outline-offset: 3px; }
+
+      button.mi-link {
+        appearance: none;
+        background: none;
+        border: 0;
+        color: var(--dim);
+        font-family: var(--mono);
+        font-size: 0.85em;
+        text-decoration: underline;
+        cursor: pointer;
+        padding: 0.5em;
+      }
+      button.mi-link:hover { color: var(--ink); }
+
+      /* The handoff, as a nailed-to-the-wall notice. */
+      .notice {
+        background: linear-gradient(#e6c290, #d9ae7f 40%, #c99a6a);
+        color: #2e1d10;
+        padding: clamp(18px, 4vmin, 40px);
+        border: 3px solid #2e1d10;
+        box-shadow: 0 0 0 1px #8f5c38 inset, 6px 6px 0 rgba(0, 0, 0, 0.55);
+        position: relative;
+      }
+      .notice::before,
+      .notice::after {
+        content: "";
+        position: absolute;
+        top: 10px;
+        width: 9px;
+        height: 9px;
+        background: #6b6377;
+        border: 1px solid #2b2434;
+        border-radius: 50%;
+      }
+      .notice::before { left: 12px; }
+      .notice::after { right: 12px; }
+
+      .notice h1 {
+        margin: 0 0 0.2em;
+        font-size: clamp(19px, 3.4vmin, 30px);
+        letter-spacing: 0.02em;
+        text-transform: uppercase;
+      }
+      .notice .sub { margin: 0 0 1.6em; font-size: 0.86em; line-height: 1.6; color: #5c3823; }
+      .notice label { display: block; margin: 1.05em 0 0.3em; font-size: 0.82em; text-transform: uppercase; letter-spacing: 0.1em; }
+      .notice .hint { font-size: 0.78em; color: #75482c; margin: 0.25em 0 0; }
+      .notice input[type="text"],
+      .notice input[type="email"],
+      .notice input[type="url"],
+      .notice select,
+      .notice textarea {
+        width: 100%;
+        font-family: var(--mono);
+        font-size: 1em;
+        padding: 0.6em 0.7em;
+        color: #1c1109;
+        background: #f0dcbb;
+        border: 2px solid #75482c;
+        border-radius: 2px;
+      }
+      .notice textarea { min-height: 5.5em; resize: vertical; }
+      .notice input:focus-visible,
+      .notice select:focus-visible,
+      .notice textarea:focus-visible { outline: 3px solid #b4550f; outline-offset: 1px; }
+      .notice .row { display: flex; gap: 1em; flex-wrap: wrap; }
+      .notice .row > * { flex: 1 1 14ch; }
+      .notice .err { color: #8f2039; font-size: 0.82em; margin-top: 0.4em; min-height: 1.2em; }
+      .notice .actions { display: flex; gap: 1em; align-items: center; flex-wrap: wrap; margin-top: 1.4em; }
+      .notice .actions .mi-link { color: #75482c; }
+      .notice .actions .mi-link:hover { color: #1c1109; }
+      /* The status comes first and looks like a stamp: it is the one line that
+         depends on this visit. Green when the browser has already said no. */
+      .notice .counting-status-box { margin: 0 0 1.2em; padding: 0.75em 0.9em; border: 2px solid #75482c; background: rgba(255, 250, 218, 0.6); }
+      .notice .counting-status-box[data-status="browser_signal"] { border-color: #4f7a3a; background: rgba(124, 187, 96, 0.2); }
+      .notice .counting-status-box .counting-status { margin: 0; font-weight: bold; }
+      .notice .counting-toggle { margin: 0.6em 0 0; padding: 0; color: #8f2039; text-decoration: underline; }
+      .notice .counting-toggle:hover { color: #1c1109; }
+      .notice .counting .counting-aside { font-style: italic; color: #75482c; }
+      .notice .counting-folded > summary { cursor: pointer; font-weight: bold; margin-bottom: 0.8em; }
+      .privacy-panel .privacy-kicker { margin: 0 0 0.3em; font-size: 0.86em; font-style: italic; color: #75482c; }
+      .privacy-panel { font-size: clamp(13px, 2.2vmin, 17px); line-height: 1.6; }
+      .privacy-panel .counting p { margin: 0 0 0.9em; }
+      .privacy-panel .rights { margin-top: 1.4em; font-size: 0.86em; color: #5c3823; }
+      .privacy-panel .rights p { margin: 0.4em 0; }
+      .notice a { color: #8f2039; }
+      .notice a.mi-btn { color: var(--night); }
+
+      /* Start screen: the Privacy link, bottom right, out of the wordmark's way. */
+      #privacy-link {
+        position: fixed;
+        right: max(8px, env(safe-area-inset-right, 0px));
+        bottom: max(6px, env(safe-area-inset-bottom, 0px));
+        z-index: 9;
+        min-height: 44px;
+        padding: 10px 12px;
+        border: 0;
+        background: transparent;
+        color: var(--dim);
+        font: inherit;
+        font-size: clamp(12px, 1.8vmin, 15px);
+        letter-spacing: 0.08em;
+        text-decoration: underline;
+        text-underline-offset: 3px;
+        cursor: pointer;
+      }
+      #privacy-link:hover { color: var(--ink); }
+      #privacy-link:focus-visible { outline: 2px solid var(--amber); outline-offset: 2px; color: var(--ink); }
+      #privacy-link[hidden] { display: none; }
+
+      .visually-hidden {
+        position: absolute;
+        width: 1px; height: 1px;
+        margin: -1px; padding: 0;
+        overflow: hidden;
+        clip: rect(0 0 0 0);
+        white-space: nowrap;
+        border: 0;
+      }
+
+      /* Boot / loading */
+      #boot {
+        position: fixed;
+        inset: 0;
+        display: grid;
+        place-items: center;
+        background: #000;
+        color: var(--dim);
+        font-size: clamp(12px, 2vmin, 16px);
+        letter-spacing: 0.18em;
+        text-align: center;
+        z-index: 20;
+        transition: opacity 0.4s ease-out;
+      }
+      #boot.gone { opacity: 0; pointer-events: none; }
+      #boot .err { color: #c33c4e; letter-spacing: 0; text-align: left; max-width: 60ch; }
+
+      #phone-orientation-hint {
+        position: fixed;
+        inset: 0;
+        z-index: 15;
+        display: grid;
+        place-items: center;
+        padding:
+          max(20px, env(safe-area-inset-top, 0px))
+          max(20px, env(safe-area-inset-right, 0px))
+          max(20px, env(safe-area-inset-bottom, 0px))
+          max(20px, env(safe-area-inset-left, 0px));
+        background: rgba(0, 0, 0, 0.86);
+        text-align: center;
+      }
+
+      #phone-orientation-hint[hidden] { display: none; }
+
+      .phone-orientation-card {
+        width: min(30rem, 100%);
+        padding: 24px;
+        border: 2px solid var(--amber-dark);
+        background: var(--night);
+        box-shadow: 0 12px 40px rgba(0, 0, 0, 0.8);
+      }
+
+      .phone-orientation-card p {
+        margin: 0 0 20px;
+        line-height: 1.6;
+      }
+
+      .phone-orientation-card button {
+        min-height: 44px;
+        padding: 10px 18px;
+        border: 1px solid var(--amber);
+        background: var(--wood-dark);
+        color: var(--ink);
+        font: inherit;
+        cursor: pointer;
+      }
+
+      @media (prefers-reduced-motion: reduce) {
+        #boot { transition: none; }
+      }
+    </style>
+  </head>
+  <body>
+    <div id="stage">
+      <div id="game-viewport">
+        <canvas id="screen" width="320" height="200" role="img"
+          aria-label="The Monkey AIsland — a pixel-art point and click adventure. Use the on-screen verbs to play."></canvas>
+      </div>
+    </div>
+
+    <div id="overlay" role="dialog" aria-modal="true" aria-labelledby="ovl-title"></div>
+
+    <!-- Start screen only: what the game counts, and the switch to stop it.
+         Labelled from ui.yaml `counting.link` once the content has loaded. -->
+    <button type="button" id="privacy-link" hidden></button>
+
+    <div id="phone-orientation-hint" role="dialog" aria-labelledby="phone-orientation-title" hidden>
+      <div class="phone-orientation-card">
+        <p id="phone-orientation-title">Turn your phone sideways for a larger view.</p>
+        <button type="button" data-dismiss-orientation>Continue in portrait</button>
+      </div>
+    </div>
+
+    <div id="boot"><div>LOADING&nbsp;THE&nbsp;MONKEY&nbsp;AISLAND<br /><br />PLEASE INSERT DISK 22</div></div>
+
+    <noscript>
+      <p style="padding: 2rem; color: #f4f0d8">
+        This is a JavaScript game about wanting to be the greatest engineer of all time. Turning
+        JavaScript off is a bold opening move. Respect. But you'll need it on.
+        Meanwhile: <a style="color: #f5b942" href="https://theagilemonkeys.com">theagilemonkeys.com</a>
+      </p>
+    </noscript>
+
+    <script type="module" src="/src/main.ts"></script>
+  </body>
+</html>

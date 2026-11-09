@@ -1,0 +1,102 @@
+# ---------------------------------------------------------------------------
+# Nayara, the lookout. In real life she is the first human every candidate
+# talks to. Here she is a sardonic gatekeeper on a cliff at night.
+#
+# Schema:
+#   tree:
+#     speaker:  who says lines that don't name a speaker
+#     start:    first node
+#     nodes:
+#       node_id:
+#         lines:   [ "text", { who: someone, text: "…", emote: laugh } ]
+#         choices: [ { text: "what the player says", goto: node_id, once: true,
+#                      if: [flag], unless: [flag], set: [flag],
+#                      action: { type: chat } , exit: true } ]
+#         goto / set / clear / action
+# ---------------------------------------------------------------------------
+
+nayara:
+  speaker: nayara
+  start: root
+  nodes:
+    root:
+      lines:
+        - 'Stop right there.'
+        - "I'm Nayara. I watch the path."
+        - "You're the twelfth one this month. They all come up here with that exact face:
+           ready to become the greatest engineer of all time."
+        - "This is The Monkey AIsland. It's meant to make it easier for interesting
+           engineers and The Agile Monkeys to find each other."
+        - "The first conversation is awkward, so we replaced it with a cliff, a pirate
+           bar, and two monkeys. Much simpler."
+        - "So. What do you want to know?"
+      goto: hub
+
+    hub:
+      choices:
+        - text: 'How do I actually progress?'
+          goto: progress
+          once: true
+        - text: "Can't I just send my CV like a normal person?"
+          goto: cv
+          once: true
+        - text: 'You look like someone who has read a lot of CVs.'
+          goto: cvs_read
+          once: true
+        - text: "If this is meant to make hiring easier, why doesn't it assess temperament
+                 under pressure by simulating a complex real-world engineering incident?"
+          goto: assessment
+          once: true
+        - text: '(Say nothing and stare at the sea.)'
+          say: false
+          goto: stare
+          once: true
+
+    progress:
+      lines:
+        - "Go down the path, cross the dock, and keep going until you reach El Patilla."
+        - "Jaime and Javi are the two monkeys at the bar. Ask either of them about the
+           challenges."
+        - "The other people are engineers drinking rum. Talking to them is optional.
+           Getting them to stop is not currently implemented."
+        - "Complete the monkeys' challenges and they'll show you the treasure: a
+           conversation with our hiring chat."
+        - "Adventure games used to end with gold. We have a chatbot."
+      goto: hub
+
+    cv:
+      lines:
+        - "Of course. You could have emailed it from your sofa in your underwear, like a
+           normal professional."
+        - "But instead you climbed a cliff at night to ask a woman in a pirate game for
+           permission to skip the pirate game."
+        - "At this point, dignity is a sunk cost. Play it out. It takes four minutes and
+           at least one of us will be funny."
+        - "At the end there's a chat that asks you the things I would ask you.
+           I read what comes out of it myself."
+      goto: hub
+
+    cvs_read:
+      lines:
+        - "Four thousand, give or take."
+        - "Nine hundred and six 'passionate about technology'. Two hundred 'ninja'.
+           Forty-one 'rockstar'. One 'code sorcerer', who was, to be fair, quite good."
+        - "One person sent a CV in Comic Sans that was the best CV I have ever read.
+           He works here now. Don't get ideas."
+      goto: hub
+
+    assessment:
+      lines:
+        - "Oh, come on. You got me."
+        - "This was just done for fun."
+        - "Please don't tell the team."
+      goto: hub
+
+    stare:
+      lines:
+        - "…"
+        - "Take your time. The sea's been doing that for a while."
+        - "Most people fill silence with something about 'synergies'. You didn't.
+           Noted."
+      set: [nayara_respects_you]
+      goto: hub

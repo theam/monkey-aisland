@@ -1,0 +1,42 @@
+{
+  "name": "monkey-aisland",
+  "version": "1.0.0",
+  "private": true,
+  "description": "The Monkey AIsland — a point-and-click hiring adventure by The Agile Monkeys",
+  "license": "Apache-2.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "npm run typecheck && vite build",
+    "deploy": "wrangler deploy",
+    "deploy:check": "npm run build && wrangler deploy --dry-run",
+    "lint": "eslint src tests worker vite.config.ts",
+    "preview": "vite preview --port 4173",
+    "test": "vitest run",
+    "test:game": "start-server-and-test 'vite --host 127.0.0.1 --port 5190 --strictPort' http://127.0.0.1:5190 'npm run shots -- --base http://127.0.0.1:5190 && npm run test:mobile -- --base http://127.0.0.1:5190'",
+    "test:mobile": "node scripts/mobile-checks.mjs",
+    "typecheck": "tsc --noEmit && tsc --noEmit -p tsconfig.test.json",
+    "shots": "node scripts/shots.mjs",
+    "social-card": "node scripts/social-card.mjs",
+    "promo-video": "node scripts/promo-video.mjs"
+  },
+  "dependencies": {
+    "js-yaml": "^4.3.2"
+  },
+  "devDependencies": {
+    "@eslint/js": "^10.0.1",
+    "@types/js-yaml": "^4.0.9",
+    "@types/node": "^22.20.5",
+    "eslint": "^10.14.0",
+    "playwright": "^1.62.1",
+    "start-server-and-test": "^3.0.13",
+    "typescript": "^5.6.3",
+    "typescript-eslint": "^8.72.1",
+    "vite": "^8.3.7",
+    "vitest": "^4.1.12",
+    "wrangler": "^4.159.0"
+  },
+  "overrides": {
+    "brace-expansion": "^5.0.12"
+  }
+}

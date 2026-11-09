@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Promo — The Monkey AIsland</title>
+    <!-- A dev page, not part of the game: `vite build` only builds index.html.
+         `npm run promo-video` renders this page to an MP4. -->
+    <style>
+      html, body { margin: 0; height: 100%; background: #000; color: #8b8496; }
+      body {
+        display: grid;
+        grid-template-rows: 1fr auto;
+        font: 13px ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+      }
+      #viewport { display: grid; place-items: center; min-height: 0; overflow: hidden; }
+      canvas { image-rendering: pixelated; display: block; }
+      #controls { display: flex; gap: 12px; align-items: center; padding: 10px 16px; }
+      #controls input[type=range] { flex: 1; accent-color: #f5b942; }
+      button, select {
+        font: inherit; color: #f4f0d8; background: #2e1d10;
+        border: 1px solid #75482c; padding: 4px 10px; cursor: pointer;
+      }
+      #time { min-width: 9ch; text-align: right; color: #f4f0d8; }
+    </style>
+  </head>
+  <body>
+    <div id="viewport"><canvas id="screen"></canvas></div>
+    <div id="controls">
+      <button id="play" type="button">Play</button>
+      <input id="scrub" type="range" min="0" max="1" step="0.001" value="0" aria-label="Time" />
+      <span id="time">0.00</span>
+      <select id="format" aria-label="Format">
+        <option value="wide">16:9</option>
+        <option value="square">1:1</option>
+      </select>
+    </div>
+    <script type="module" src="/src/promo/main.ts"></script>
+  </body>
+</html>

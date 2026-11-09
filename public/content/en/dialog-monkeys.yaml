@@ -1,0 +1,213 @@
+# ---------------------------------------------------------------------------
+# Jaime and Javi: the two monkeys on the bar who guide candidates to the hiring chat.
+#
+# Jaime supplies enthusiasm and instinct. Javi supplies precision and restraint.
+# Together they are the most functional partnership in the company.
+# ---------------------------------------------------------------------------
+
+jaime:
+  speaker: jaime
+  start: root
+  nodes:
+    root:
+      lines:
+        - 'Welcome. If you made it this far, you are either curious, stubborn, or
+           very bad at following normal application links.'
+        - { who: javi, text: 'All three are acceptable. None are sufficient.' }
+        - { who: jaime, text: 'That is Javi. I make people want to start things. He
+                               makes sure the things survive.' }
+        - { who: javi, text: 'Usually in that order.' }
+      goto: hub
+
+    hub:
+      choices:
+        - text: 'I want to be the greatest engineer of all time.'
+          goto: greatest
+          once: true
+        - text: 'Why are the monkeys in charge of hiring?'
+          goto: why
+          once: true
+        - text: 'What are you actually looking for?'
+          goto: looking_for
+          once: true
+        - text: 'Tell me about the two challenges.'
+          action: { type: dialog, id: monkeys_challenge }
+        - text: 'I need a minute.'
+          exit: true
+
+    greatest:
+      lines:
+        - 'Good. Aim high. Just do not confuse being impressive with being useful.'
+        - { who: javi, text: 'The useful engineer notices what matters, makes a
+                              decision, and owns the result.' }
+        - { who: jaime, text: 'See? I provide ambition. He adds columns.' }
+        - { who: javi, text: 'Columns make ambition queryable.' }
+      goto: hub
+
+    why:
+      lines:
+        - 'Because hiring is too important to leave to a form.'
+        - { who: javi, text: 'We replaced the form with a chatbot.' }
+        - { who: jaime, text: 'A chatbot that asks follow-up questions.' }
+        - { who: javi, text: 'After a conversation. With two monkeys.' }
+        - { who: jaime, text: 'Already better.' }
+      goto: hub
+
+    looking_for:
+      lines:
+        - 'People who care about the outcome, not just their part. People who learn
+           fast and say something when it is not working.'
+        - { who: javi, text: 'People who make sound technical decisions, explain them
+                              clearly, and own what reaches production.' }
+        - { who: jaime, text: 'Same answer.' }
+        - { who: javi, text: 'Mine can be scored.' }
+        - { who: jaime, text: 'Mine fits on a wall.' }
+      goto: hub
+
+# ---------------------------------------------------------------------------
+
+javi:
+  speaker: javi
+  start: root
+  nodes:
+    root:
+      lines:
+        - 'Hi. I am Javi. Jaime has probably already made this sound important.'
+        - { who: jaime, text: 'It is important.' }
+        - { who: javi, text: 'Good. Then I can skip that part. What do you want to
+                              know?' }
+      goto: hub
+
+    hub:
+      choices:
+        - text: 'I want to be the greatest engineer of all time.'
+          goto: greatest
+          once: true
+        - text: 'Do you ever speak normally?'
+          goto: normally
+          once: true
+        - text: 'What are you writing on that tiny scroll?'
+          goto: scroll
+          once: true
+        - text: 'Tell me about the two challenges.'
+          action: { type: dialog, id: monkeys_challenge }
+        - text: 'I need a minute.'
+          exit: true
+
+    greatest:
+      lines:
+        - 'Ambitious. Poorly scoped.'
+        - { who: jaime, text: 'Perfectly scoped. The scope is all time.' }
+        - { who: javi, text: 'That is the problem.' }
+        - 'Show us what you have built, what went wrong, and what you did next. That
+           tells us more than the title.'
+        - { who: jaime, text: 'And if it is good, I will call it historic.' }
+      goto: hub
+
+    normally:
+      lines:
+        - 'Yes.'
+        - '…'
+        - 'But after eleven hundred refinement sessions, normal sounds like a
+           requirement with no acceptance criteria.'
+        - { who: jaime, text: 'He used to tell stories.' }
+        - { who: javi, text: 'They had edge cases.' }
+      goto: hub
+
+    scroll:
+      lines:
+        - 'Notes. You made it through the island, talked to people, and did not
+           mention blockchain.'
+        - { who: player, text: 'Is that good?' }
+        - 'Very.'
+        - { who: jaime, text: "His highest rating is 'meets expectations'. Take the
+                               win." }
+      goto: hub
+
+# ---------------------------------------------------------------------------
+# Two deliberately silly game challenges. They are not hiring stages.
+# ---------------------------------------------------------------------------
+
+monkeys_challenge:
+  speaker: jaime
+  start: root
+  nodes:
+    root:
+      lines:
+        - { who: giorgio, text: 'Oh! The challenges! Everybody look professional!',
+            emote: laugh }
+        - { who: bigjohn, text: 'Too late.' }
+        - { who: chaxi, text: 'Let them speak.' }
+        - { who: jaime, text: 'Two challenges. Real game challenges — not secret
+                               hiring stages.' }
+        - { who: javi, text: 'Nothing here is part of a real assessment, and nothing
+                              here makes a hiring decision.' }
+      goto: first
+
+    first:
+      lines:
+        - { who: jaime, text: 'The first challenge is to prove that you actually want
+                               to talk to us about working here.' }
+        - { who: player, text: 'How do I do that?' }
+        - { who: javi, text: 'You already did. You crossed the island, entered this
+                              bar, and asked the monkeys about a job.' }
+        - { who: jaime, text: 'Nobody does all that by accident.' }
+        - { who: javi, text: 'If you were not interested, you would have closed the
+                              tab several jokes ago.' }
+        - { who: jaime, text: 'First challenge: passed with distinction.' }
+        - { who: javi, text: 'Passed. There is no distinction.' }
+      goto: second
+
+    second:
+      lines:
+        - { who: jaime, text: 'The second challenge is an insult duel.' }
+        - { who: javi, text: 'A code-review insult duel. Five questionable review
+                              comments. Three possible replies to each.' }
+        - { who: giorgio, text: 'And I am your opponent!', emote: laugh }
+        - { who: chaxi, text: 'He has been training for this without anyone asking
+                               him to.' }
+        - { who: bigjohn, text: 'For years.' }
+        - { who: jaime, text: 'Survive Giorgio and the hiring chat is yours.' }
+        - { who: javi, text: 'Survive means finish. This is not an assessment.' }
+      goto: offer
+
+    offer:
+      choices:
+        - text: 'Start the duel.'
+          action: { type: dialog, id: duel }
+        - text: 'So what is the real hiring process?'
+          goto: real
+          once: true
+        - text: 'What happens after the duel?'
+          goto: after
+          once: true
+        - text: 'I need to prepare emotionally.'
+          exit: true
+
+    real:
+      lines:
+        - { who: javi, text: 'The honest answer? It is changing. We keep finding ways
+                              to make it better, which is engineering language for
+                              changing it again.' }
+        - { who: jaime, text: 'But we can promise two things: it will be thorough,
+                               and it will be demanding.' }
+        - { who: javi, text: 'At least more thorough and demanding than we have been
+                              with the jokes in this game.' }
+        - { who: giorgio, text: 'That is not a difficult benchmark.' }
+        - { who: bigjohn, text: 'And yet several jokes still failed to meet it.' }
+        - { who: jaime, text: 'The exact steps may move around. The standards will
+                               not.' }
+        - { who: javi, text: 'When the time comes, the hiring team will explain the
+                              current version. Ideally without monkeys.' }
+        - { who: giorgio, text: 'Cowards.' }
+      goto: offer
+
+    after:
+      lines:
+        - { who: javi, text: 'A chat. It asks what you have built, how you decide,
+                              and how you work with AI. You choose how much to
+                              say.' }
+        - { who: jaime, text: 'Then the game ends and the humans begin.' }
+        - { who: giorgio, text: 'The monkeys remain available for consultancy.' }
+        - { who: bigjohn, text: 'They do not.' }
+      goto: offer

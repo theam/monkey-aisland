@@ -1,0 +1,495 @@
+# ---------------------------------------------------------------------------
+# El Patilla: the three engineers and the barman.
+#
+# Giorgio  — jokes, constantly, and laughs first.
+# Big-John — deadpan, genuinely fascinating, slightly terrifying.
+# Chaxiraxi — the sane one. Nobody can pronounce her name. This will escalate.
+# Patilla  — the barman. Arehucas. Sideburns of national significance.
+# ---------------------------------------------------------------------------
+
+giorgio:
+  speaker: giorgio
+  start: root
+  nodes:
+    root:
+      lines:
+        - text: "HA! Look at this one. Look at the face. That is the face of someone
+                 who has read the job ad."
+          emote: laugh
+        - { who: bigjohn, text: 'They have not read the job ad.' }
+        - { who: giorgio, text: "They have READ it. They just did not UNDERSTAND it.
+                                 HA!", emote: laugh }
+      goto: hub
+
+    hub:
+      choices:
+        - text: 'I want to be the greatest engineer of all time.'
+          goto: greatest
+          once: true
+        - text: 'Is he always like this?'
+          goto: always
+          once: true
+        - text: 'What do you do here, Giorgio?'
+          goto: work
+          once: true
+        - text: 'Tell me a joke, then.'
+          goto: joke
+          once: true
+        - text: 'I should talk to the others.'
+          exit: true
+
+    greatest:
+      lines:
+        - text: "The greatest engineer of ALL TIME. Of ALL TIME! Big-John, they said
+                 all time."
+          emote: laugh
+        - { who: bigjohn, text: 'I heard.' }
+        - { who: giorgio, text: "My friend, last week I said I was the greatest engineer in
+                                 this ROOM and Chaxiraxi opened a laptop and PROVED me wrong
+                                 with a git log." }
+        - { who: chaxi, text: 'It took four minutes.' }
+        - { who: giorgio, text: 'It took THREE. Be accurate. HA!', emote: laugh }
+      goto: hub
+
+    always:
+      lines:
+        - { who: chaxi, text: 'Yes.' }
+        - { who: bigjohn, text: 'Yes.' }
+        - { who: giorgio, text: 'They love me. This is love. You are watching love.', emote: laugh }
+      goto: hub
+
+    work:
+      lines:
+        - "Me? I make things that work and then I make them funny. In that order,
+           usually. Sometimes the other order, which is when they page me."
+        - "Backend, mostly. Events, queues, the plumbing. If your order arrives, that
+           was me. If it arrives twice — also me, but only once."
+      goto: hub
+
+    joke:
+      lines:
+        - "Okay okay okay. A microservice walks into a bar."
+        - '…'
+        - "Then another one. Then eleven more. Two of them cannot find the bar. One of
+           them IS the bar now. Nobody can order a drink and the barman has a
+           dashboard."
+        - text: "HA! It is not a joke, it is a POST-MORTEM. HA HA!"
+          emote: laugh
+        - { who: bigjohn, text: 'It was our post-mortem.' }
+        - { who: giorgio, text: 'It was OUR post-mortem!', emote: laugh }
+      goto: joke_after
+
+    joke_after:
+      choices:
+        - text: 'Your standup must be a delight.'
+          goto: standup
+          once: true
+        - text: 'Anything else?'
+          goto: hub
+
+    standup:
+      lines:
+        - "We do not have standup. We have a message. It says what you did. It is
+           beautiful. Nobody stands."
+        - "One time a client made us do a real standup, every morning, on camera,
+           fifteen people. Big-John stood for eleven days without speaking."
+        - { who: bigjohn, text: 'Twelve.' }
+        - { who: giorgio, text: 'TWELVE days! And on day twelve he said one sentence and
+                                 they cancelled the standup.', emote: laugh }
+        - { who: player, text: 'What was the sentence?' }
+        - { who: bigjohn, text: "'This meeting costs forty-one thousand euros a year.'" }
+      goto: hub
+
+# ---------------------------------------------------------------------------
+
+bigjohn:
+  speaker: bigjohn
+  start: root
+  nodes:
+    root:
+      lines:
+        - 'You are standing in my light.'
+        - '…'
+        - 'That was a joke. Giorgio is contagious.'
+      goto: hub
+
+    hub:
+      choices:
+        - text: 'I want to be the greatest engineer of all time.'
+          goto: greatest
+          once: true
+        - text: 'Tell me something I do not know.'
+          goto: fact1
+          once: true
+        - text: 'Tell me another one.'
+          goto: fact2
+          if: [heard_fact1]
+          once: true
+        - text: 'One more.'
+          goto: fact3
+          if: [heard_fact2]
+          once: true
+        - text: 'What do you work on?'
+          goto: work
+          once: true
+        - text: 'Why is everyone here so calm?'
+          goto: calm
+          once: true
+        - text: 'Nice folded arms.'
+          goto: arms
+          once: true
+        - text: 'I should talk to the others.'
+          exit: true
+
+    greatest:
+      lines:
+        - 'There is no greatest engineer. There is only the engineer who was on call
+           when it broke.'
+        - 'Aim for that one. That one is real.'
+      goto: hub
+
+    fact1:
+      lines:
+        - "In 1962, Mariner 1's Atlas rocket lost its guidance signal from the
+           ground. It was supposed to ignore the bad data and follow a stored course."
+        - 'An omitted overbar in a guidance equation meant it did not. It followed
+           the noise, veered off course, and range safety destroyed it.'
+        - 'Two faults. Either one alone might have been survivable.'
+        - 'Your fallback is production code.'
+      set: [heard_fact1]
+      goto: hub
+
+    fact2:
+      lines:
+        - 'Ariane 5, first flight, 1996. A 64-bit float was converted to a 16-bit
+           signed integer. The value did not fit. The rocket tore itself apart
+           thirty-nine seconds after launch.'
+        - 'The code that failed was not even needed in flight. It was left running
+           from the previous rocket.'
+        - 'Every system you will ever join has one of these still running.'
+      set: [heard_fact2]
+      goto: hub
+
+    fact3:
+      lines:
+        - 'The CAP theorem is simple. When the network splits, you either stop answering
+           some requests or risk inconsistent answers.'
+        - 'Anyone promising both has not had the outage yet.'
+        - 'That is all. Pick your failure.'
+      set: [heard_fact3]
+      goto: hub
+
+    work:
+      lines:
+        - 'I used to work on iOS development. For a long time. Long enough to
+           remember when an iPhone had one screen size and everyone thought that
+           would last.'
+        - 'Then Apple made them taller, shorter, wider, notched, rounded, and
+           occasionally enormous.'
+        - 'I adapted. Now I engineer AI applications, where the models change even
+           faster and occasionally invent their own screen sizes.'
+      goto: hub
+
+    calm:
+      lines:
+        - 'Because nobody here is pretending.'
+        - 'Panic is what happens when the story you told the client and the state of
+           the system are different. We do not tell that story.'
+      goto: hub
+
+    arms:
+      lines:
+        - '…'
+        - 'Thank you.'
+      goto: hub
+
+# ---------------------------------------------------------------------------
+
+chaxi:
+  speaker: chaxi
+  start: root
+  nodes:
+    root:
+      lines:
+        - "Hello. I'm Chaxiraxi."
+        - { who: giorgio, text: 'Watch their face when they reach the second X!', emote: laugh }
+        - 'Ignore him. He has known me for nine years and still improvises.'
+      goto: hub
+
+    hub:
+      choices:
+        - text: 'I refuse to pronounce a name with that many Xs.'
+          goto: name1
+          once: true
+        - text: 'I want to be the greatest engineer of all time.'
+          goto: greatest
+          once: true
+        - text: 'What is it actually like working here?'
+          goto: real_talk
+          once: true
+        - text: 'What are these two challenges everyone mentions?'
+          goto: challenges
+          once: true
+        - text: 'How do I get the monkeys to take me seriously?'
+          goto: monkeys
+          once: true
+        - text: 'I should talk to the others.'
+          exit: true
+
+    # --- THE NAME BIT ------------------------------------------------------
+    name1:
+      lines:
+        - 'There are two.'
+        - { who: player, text: 'That is already above my limit.' }
+        - 'Nine letters. Nobody has died. Go on.'
+      goto: name_hub
+
+    # The attempts are gated so they arrive in order — which keeps the list
+    # under six options AND makes the escalation land properly, because you
+    # can't skip to the good one.
+    name_hub:
+      choices:
+        - text: 'Chak-see-rack-see.'
+          goto: name2
+          once: true
+        - text: 'Chaxi… raxi… taxi?'
+          goto: name3
+          once: true
+          if: [said_chakseeraksee]
+        - text: 'Cha-shi-ra-shi?'
+          goto: name4
+          once: true
+          if: [said_taxiraxi]
+        - text: 'Cha-si-RA-si. Chaxiraxi.'
+          goto: name5
+          once: true
+          if: [heard_chaxiraxi_pronunciation]
+        - text: 'What does Cha-xi-ra-xi mean?'
+          goto: name_meaning
+          once: true
+          if: [chaxiraxi_named]
+        - text: 'Chaxiraxi. Chaxiraxi. Chaxiraxi.'
+          goto: name_exhausted
+          once: true
+          if: [chaxiraxi_impressed]
+        - text: 'Behind you, a three-headed monkey!'
+          goto: name_monkey
+          once: true
+          if: [said_taxiraxi]
+        - text: "Can I just call you 'boss'?"
+          goto: name_boss
+        - text: "I am so sorry. Moving on."
+          goto: hub
+
+    name2:
+      lines:
+        - 'That is what happens when English sees an X and panics.'
+        - { who: bigjohn, text: 'It panicked twice.' }
+      set: [said_chakseeraksee]
+      goto: name_hub
+
+    name3:
+      lines:
+        - 'You reached the final syllable and ordered transport.'
+        - { who: giorgio, text: 'Reasonable! This has been a very long onboarding!', emote: laugh }
+      set: [said_taxiraxi]
+      goto: name_hub
+
+    name4:
+      lines:
+        - 'Closer. Right number of syllables. Wrong consonant.'
+        - { who: bigjohn, text: 'You added two Hs.' }
+        - 'I gave you two Xs. This is not an exchange programme.'
+        - 'Both Xs sound like an S. Cha-si-RA-si.'
+      set: [heard_chaxiraxi_pronunciation]
+      goto: name_hub
+
+    name5:
+      lines:
+        - 'Yes.'
+        - { who: giorgio, text: 'ALL NINE LETTERS! IN PRODUCTION ORDER!', emote: laugh }
+        - { who: bigjohn, text: 'There was no staging.' }
+        - 'Please do not turn my name into a deployment.'
+      set: [chaxiraxi_named]
+      goto: name_hub
+
+    name_meaning:
+      lines:
+        - 'Look at that. Nine letters, in the right order.'
+        - 'Chaxiraxi is remembered in Guanche tradition as a mother goddess, and as the
+           name under which the Guanches venerated the image later identified as the
+           Virgin of Candelaria.'
+        - 'The basilica is dedicated to the Virgin of Candelaria, not to me. I checked.'
+        - { who: giorgio, text: 'I have also been venerated.', emote: laugh }
+        - { who: bigjohn, text: 'By yourself.' }
+        - 'Daily.'
+      set: [chaxiraxi_impressed]
+      goto: name_hub
+
+    name_exhausted:
+      lines:
+        - 'Yes. All three.'
+        - { who: player, text: 'I spent too long learning this. I need to get some value from it.' }
+        - 'You are pronouncing my name like a load test.'
+        - { who: giorgio, text: 'Increase concurrency!', emote: laugh }
+        - 'Oh, leave it.'
+      set: [chaxiraxi_exhausted]
+      goto: hub
+
+    name_monkey:
+      lines:
+        - '…'
+        - 'There are two monkeys and they are both in front of me, on the bar,
+           drinking.'
+        - { who: giorgio, text: 'They tried the three-headed monkey! On CHAXIRAXI!',
+            emote: laugh }
+        - 'You reached the second X and panicked again, did you?'
+      goto: name_hub
+
+    name_boss:
+      lines:
+        - 'You may not.'
+        - 'You may call me Chaxiraxi, badly, forever. Everyone does. It is fine. It is
+           a nine-letter name and it has defeated three nationalities in this room alone.'
+        - { who: giorgio, text: 'I have known her nine years.' }
+        - { who: chaxi, text: 'He says it wrong nine different ways.' }
+        - { who: giorgio, text: 'I ROTATE them! It is a feature!', emote: laugh }
+      set: [chaxi_nickname]
+      goto: hub
+
+    greatest:
+      lines:
+        - 'Right. Two things about that.'
+        - 'One: nobody here will laugh at you for wanting it. That is why we are all
+           here instead of somewhere with a share price.'
+        - 'Two: "greatest engineer" is a story people tell before their first real
+           outage. After that they want to be the most useful engineer, which is
+           harder and worth more.'
+      goto: hub
+
+    real_talk:
+      lines:
+        - 'Challenging. In the good way. You work with very smart engineers on
+           problems that rarely have an obvious answer.'
+        - 'The standards are high, the feedback is direct, and someone will question
+           your favourite idea before you have finished becoming emotionally attached
+           to it.'
+        - 'The nice part is that nobody needs to prove they are the smartest person
+           in the room. People ask questions, challenge each other, and change their
+           minds when the evidence changes.'
+        - 'Sometimes everyone on the call goes quiet because the problem has become
+           genuinely interesting.'
+        - { who: giorgio, text: 'Sometimes everyone goes quiet because somebody
+                                 forgot to unmute.' }
+        - { who: chaxi, text: 'Usually Giorgio.' }
+      goto: hub
+
+    challenges:
+      lines:
+        - 'They are game challenges. The first is proving that you actually want to
+           talk to us.'
+        - { who: player, text: 'How do I prove that?' }
+        - 'You reached a bar at the end of an island and started questioning its
+           monkeys. You have already overdelivered.'
+        - 'The second is a code-review insult duel with Giorgio.'
+        - { who: giorgio, text: 'I represent technical excellence under pressure!',
+            emote: laugh }
+        - { who: bigjohn, text: 'He represents volume under pressure.' }
+        - 'Finish the duel and the monkeys will point you at the hiring chat. Do not
+           mistake any of this for the real hiring process.'
+        - { who: giorgio, text: 'The real process has fewer swords.' }
+        - { who: chaxi, text: 'And considerably higher standards.' }
+      goto: hub
+
+    monkeys:
+      lines:
+        - 'Do not try too hard. Jaime respects enthusiasm. Javi respects clear
+           answers.'
+        - 'If you impress one of them, the other will immediately ask an inconvenient
+           follow-up question. That is how they maintain balance.'
+        - 'Tell them why you are here. If you do not know yet, say that.'
+        - { who: bigjohn, text: 'Javi will write it down.' }
+        - 'He writes everything down. The advantage of honesty is that you do not
+           have to version it.'
+        - { who: giorgio, text: 'And do not offer them a banana. That is bribery.' }
+        - { who: bigjohn, text: 'He tried.' }
+        - { who: giorgio, text: 'They kept the evidence.', emote: laugh }
+      goto: hub
+
+# ---------------------------------------------------------------------------
+
+patilla:
+  speaker: patilla
+  start: root
+  nodes:
+    root:
+      lines:
+        - "You want a drink, or are you one of the ones who came to be looked at?"
+      goto: hub
+
+    hub:
+      choices:
+        - text: 'A drink. What is there?'
+          goto: drink
+          once: true
+        - text: "What's actually in Arehucas?"
+          goto: recipe
+          once: true
+        - text: 'Why is this bar called El Patilla?'
+          goto: name
+          once: true
+        - text: 'Why would they include you in a hiring game?'
+          goto: game
+          once: true
+        - text: "Those are the largest sideburns I have ever seen."
+          goto: burns
+          once: true
+        - text: 'Nothing. I am here to be looked at.'
+          exit: true
+
+    drink:
+      lines:
+        - 'Arehucas. A famous rum from the Canary Islands, made just up the road in
+           Arucas since 1884.'
+        - 'They say it has one of the largest and oldest rum cellars in Europe. Nobody
+           ever says how many rum cellars Europe has, which feels relevant.'
+        - 'We also serve water. It comes from the ground and tastes of the island, which
+           is either charming or a plumbing issue depending on your mood.'
+      goto: hub
+
+    recipe:
+      lines:
+        - 'Sugar cane. Time. A very old cellar. Far fewer signatures than the sign
+           outside claims.'
+        - '…'
+        - 'And in the one I serve after a bad deploy: honey rum, a coffee that has been
+           on since Thursday, a splash of the barrel nobody will explain, gofio for
+           body, and one drop of something a fisherman gave me in 1998 in exchange for
+           silence.'
+        - { who: giorgio, text: 'THE DEPLOY SPECIAL!', emote: laugh }
+        - 'It has been served eleven times. Nine deploys succeeded. Two people are
+           still on gardening leave.'
+      set: [heard_recipe]
+      goto: hub
+
+    name:
+      lines:
+        - 'Years ago, the Monkeys used to go to a place that served a bocadillo with
+           tortilla and pata. A lot of both.'
+        - 'Pata plus tortilla: patilla.'
+        - 'Years later, they needed a bar for a hiring game. Apparently this is what
+           immortality looks like.'
+      goto: hub
+
+    game:
+      lines:
+        - 'They? Game? What do you mean?'
+        - 'You have not even ordered a drink and somehow you are already talking
+           nonsense.'
+      goto: hub
+
+    burns:
+      lines:
+        - 'Thank you.'
+        - 'I have been offered money for them. Twice. By the same man.'
+      goto: hub

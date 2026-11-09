@@ -1,0 +1,195 @@
+# ---------------------------------------------------------------------------
+# Scene 3 — El Patilla. Warm, low ceiling, three engineers, one barman with
+# structurally significant sideburns, and two monkeys on the counter.
+# ---------------------------------------------------------------------------
+id: bar
+name: El Patilla
+background: bar
+width: 440
+camera: follow
+music: bar
+
+player_start:
+  at: [72, 133]
+  facing: right
+
+entries:
+  west:
+    at: [66, 133]
+    facing: right
+
+# Stops short of the service gate at x=304, so the player is visibly held back
+# by the gate rather than by nothing at all.
+walkbox:
+  - [52, 124]
+  - [298, 121]
+  - [300, 141]
+  - [48, 142]
+
+scale:
+  top: 0.93
+  bottom: 1.0
+
+on_enter:
+  - once: true
+    lines:
+      - "Warm air, wood smoke, and the specific silence of three people who have
+         just stopped talking about you."
+
+actors:
+  - id: giorgio
+    name: Giorgio
+    at: [172, 131]
+    facing: right
+    dialog: giorgio
+    verbs:
+      look:
+        say:
+          - "He is already laughing. Nobody has said anything yet. He is laughing
+             pre-emptively, at his own joke, which he has not made."
+      give: "He'd take it, thank me warmly, and make it into a bit."
+      use: "Giorgio is not a tool. Giorgio is a runtime."
+
+  - id: bigjohn
+    name: Big-John
+    at: [230, 125]
+    facing: left
+    dialog: bigjohn
+    verbs:
+      look:
+        say:
+          - "Enormous. Still. Arms folded like a load-bearing column."
+          - "Long black hair and a face far too young for the number of production
+             incidents behind those eyes."
+          - "He is watching me the way you watch a query you did not write."
+      push: "I would sooner push the wall. The wall gives."
+
+  - id: chaxi
+    name: Chaxiraxi
+    at: [268, 132]
+    facing: left
+    dialog: chaxi
+    verbs:
+      look:
+        say:
+          - "The only person here who looks like she knows what today's date is."
+          - "There is a notebook in front of her with actual writing in it."
+
+  - id: patilla
+    name: El Patilla
+    at: [384, 108]
+    facing: left
+    dialog: patilla
+    verbs:
+      look:
+        say:
+          - "The barman. The sideburns are impressive, but they have nothing to do
+             with the name. Apparently this needs clarifying."
+
+  # On the near end of the counter, within talking distance of the gate.
+  - id: jaime
+    name: Jaime
+    at: [334, 99]
+    facing: left
+    dialog: jaime
+    verbs:
+      look:
+        say:
+          - "A monkey. On the bar. In a bandana. Making eye contact in a way I find
+             professionally challenging."
+      pickup: "Absolutely not. That monkey has a hiring decision in him."
+
+  - id: javi
+    name: Javi
+    at: [358, 99]
+    facing: left
+    dialog: javi
+    verbs:
+      look:
+        say:
+          - "A second monkey. Woolly hat, indoors, in the Canary Islands."
+          - "He is holding a tiny scroll and looking at me like I am late."
+
+hotspots:
+  - id: counter
+    name: the bar
+    rect: [316, 96, 122, 32]
+    walk_to: [294, 133]
+    verbs:
+      look:
+        say:
+          - "A slab of wood polished by four decades of elbows and one very consistent cloth."
+      use: "I lean on the bar. It is the single most competent thing I have done today."
+
+  - id: gate
+    name: the little gate
+    rect: [302, 98, 16, 32]
+    walk_to: [290, 134]
+    verbs:
+      look:
+        say:
+          - "A knee-high wooden gate across the end of the bar. Latched."
+          - "On the other side: the barman's kingdom, two monkeys, and every bottle
+             in the building. This is the most important object in the room."
+      open:
+        say:
+          - "I lift the latch. El Patilla does not move, does not speak, and does not
+             stop looking at me."
+          - "I put the latch back."
+        sfx: door
+      push: "It's a gate. It has one job. It is doing it."
+      pull: "Latched from the other side, obviously. These people have had staff before."
+
+  - id: bottles
+    name: the bottles of Arehucas
+    rect: [340, 60, 90, 32]
+    walk_to: [300, 133]
+    verbs:
+      look:
+        say:
+          - "Arehucas. Rum from Arucas, up the road, made since 1884."
+          - "Three shelves of it. One shelf has a handwritten label: 'FOR DEPLOYS'."
+      pickup: "Reaching over a barman's counter is how you get thrown into a harbour."
+
+  - id: fireplace
+    name: the fireplace
+    rect: [72, 78, 46, 44]
+    walk_to: [104, 134]
+    verbs:
+      look:
+        say:
+          - "A fire, burning steadily, in a bar on a subtropical island. Nobody can
+             explain it. Nobody will turn it off."
+      use: "I warm my hands. Somewhere a monitoring alert resolves itself."
+
+  - id: notice
+    name: the notice board
+    rect: [130, 58, 48, 38]
+    walk_to: [152, 132]
+    verbs:
+      look:
+        say:
+          - "Notices: a lute teacher, a lost parrot, a rota for something called
+             'the deploy', and one card that just says 'WE ARE HIRING ENGINEERS.
+             ASK THE MONKEYS.'"
+        set: [saw_notice]
+      pickup: "I take the hiring card. It's the closest thing I have to a plan."
+
+  - id: table
+    name: the table
+    rect: [186, 106, 76, 22]
+    walk_to: [212, 136]
+    verbs:
+      look:
+        say:
+          - "Three mugs, one notebook, and a napkin with an architecture diagram that
+             is, unfortunately, correct."
+      pickup: "The table stays. The table has seniority."
+
+exits:
+  - id: to_dock
+    name: the door back to the dock
+    rect: [8, 56, 40, 76]
+    to: dock
+    entry: east
+    walk_to: [56, 134]

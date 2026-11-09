@@ -1,0 +1,108 @@
+# ---------------------------------------------------------------------------
+# The Monkey AIsland — game configuration
+#
+# Everything the game says lives in YAML under public/content/. Edit a file,
+# reload the page, done: no build step, no TypeScript, no engineers required.
+# ---------------------------------------------------------------------------
+
+title: The Monkey AIsland
+
+# Which folder under content/ to load the text from. Add content/es/ and switch
+# this to "es" to ship a Spanish version.
+locale: en
+
+start_scene: lookout
+
+ui: ui.yaml
+
+scenes:
+  - scene-lookout.yaml
+  - scene-dock.yaml
+  - scene-bar.yaml
+
+dialogs:
+  - dialog-nayara.yaml
+  - dialog-bar.yaml
+  - dialog-monkeys.yaml
+  - dialog-duel.yaml
+
+# Where candidates go at the end of the game: TAM's own hiring chatbot. The game
+# collects no candidate details — it only opens this link in a new tab.
+#
+# ?utm_source is the chat's own arrival tag: it files every conversation that
+# starts from here under "monkey-aisland" in the chat's channel funnel. Lower
+# case and hyphens only, or the chat flags the tag as malformed. Never put a
+# name, an email address or a token in this URL.
+#
+# The game adds the utm_medium, utm_campaign, utm_content and utm_term the
+# player arrived with (src/engine/campaign.ts), so the chat can tell which ad a
+# candidate came from. Tags written here win over the arriving ones.
+chat:
+  url: https://hiring.theagilemonkeys.com/?utm_source=monkey-aisland
+
+# How far people get before the hiring chat. `provider: none` turns it off.
+#
+# What it records: each step of the funnel once per visit — page opened, START,
+# the intro watched or skipped, first arrival in each room, which conversations
+# were opened, the duel won, the last screen shown, the chat opened. Each one
+# carries the utm_ tags the visit arrived with and, from PostHog's GeoIP, the
+# country. Never what a player answered, and nothing that survives the tab: no
+# cookies, and the visitor id is random per visit. Global Privacy Control, Do
+# Not Track and the opt-out in the Privacy panel all stop it.
+#
+# That is what lets it run without a consent banner, and only while the Privacy
+# panel (ui.yaml `counting`) says so: the game refuses to load if
+# `counting.processors` has no line for the provider set here.
+#
+# The game posts events to /api/event on its own host. The Worker
+# (worker/index.ts) checks them and forwards them to PostHog; the PostHog
+# tokens and which hosts count as production live there, in wrangler.jsonc and
+# the Worker's secrets — never here, where anyone could read them.
+#
+# Once this is on, whether someone who opened the chat went on to finish it is
+# the chat's question, answered in its Canales panel under "monkey-aisland".
+#
+# Add ?analytics to the URL to print events to the console instead of sending.
+analytics:
+  provider: posthog
+
+audio:
+  music: true
+  sfx: true
+  volume: 0.7
+
+  # Where the music comes from:
+  #   file  — the recordings in public/audio/ (the provided main theme)
+  #   synth — the original WebAudio scores written for this game, no audio files
+  # Changing this one word swaps the entire soundtrack. See the README.
+  source: file
+
+  files:
+    theme:
+      src: audio/main-theme.mp3
+      # The intro plays ONCE. After that the music loops between these two
+      # points, so the intro is never heard twice.
+      #   intro_end — where the intro stops and the loop begins
+      #   loop_end  — where playback jumps back to intro_end. Must sit before
+      #               the closing passage and fade-out at the end of the track.
+      # Tune these by ear: run the game with ?loopcheck to hear the join
+      # within a couple of seconds instead of waiting nearly three minutes.
+      intro_end: 10.031
+      loop_end: 175.032
+      crossfade: 0.35
+      gain: 0.85
+
+  # Which recorded track each scene uses. `default` covers every scene, which
+  # is what keeps the music playing across scene changes instead of restarting.
+  scene_tracks:
+    default: theme
+
+links:
+  website: https://theagilemonkeys.com
+  # There is no careers page — "Join our team" on the site is a mailto.
+  careers: mailto:hiring@theagilemonkeys.com
+  booster: https://www.boosterframework.com
+  github: https://github.com/theam
+
+# Set to true (or add ?debug to the URL) to see walkboxes and hotspot rects.
+debug: false

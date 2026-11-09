@@ -1,0 +1,300 @@
+# ---------------------------------------------------------------------------
+# THE CODE REVIEW DUEL
+#
+# The insult sword-fighting of The Secret of Monkey Island, transposed: Giorgio
+# throws a review comment, you pick the riposte. One of the three lands. The
+# other two are the kind of thing that gets a PR closed with "let's discuss
+# offline".
+#
+# Structure per round:
+#   round_N        Giorgio's comment + three ripostes
+#   winN / lossN   the outcome, then on to the next round
+#
+# Adding a round is pure YAML: copy a round block, change the text, point the
+# previous round's gotos at it.
+# ---------------------------------------------------------------------------
+
+duel:
+  speaker: giorgio
+  start: intro
+  nodes:
+    intro:
+      lines:
+        - "The rules! I leave a comment on your pull request. You reply. If your reply
+           is better than my comment, I lose ground."
+        - "If it is worse, everyone in this bar sees it, and Big-John writes it down."
+        - { who: bigjohn, text: 'I do write it down.' }
+        - text: 'En garde! Or, rather: review requested!'
+          emote: laugh
+      goto: round1
+
+    # -- Round 1 -------------------------------------------------------------
+    round1:
+      lines:
+        - "This function is four hundred lines long. I have read shorter novels, and
+           they had a plot."
+      choices:
+        - text: "It's four hundred lines because it does one thing. Your version does
+                 one thing in nine files and a queue."
+          goto: win1
+        - text: 'Nobody reads it anyway.'
+          goto: loss1
+        - text: "I'll split it in a follow-up ticket."
+          goto: loss1b
+
+    win1:
+      lines:
+        - { who: giorgio, text: '…' }
+        - text: 'HA! They have SEEN my nine files!'
+          emote: laugh
+        - { who: chaxi, text: 'Everyone has seen your nine files, Giorgio.' }
+      set: [duel_point1]
+      goto: round2
+
+    loss1:
+      lines:
+        - "'Nobody reads it anyway.' My friend, I am reading it. I am RIGHT HERE.
+           Reading it. Out loud. To a bar."
+      goto: round2
+
+    loss1b:
+      lines:
+        - "A follow-up ticket! Beautiful. I will file it next to the other four
+           hundred follow-up tickets, in the folder we call 'the archive of good
+           intentions'."
+        - { who: bigjohn, text: 'Written down.' }
+      goto: round2
+
+    # -- Round 2 -------------------------------------------------------------
+    round2:
+      lines:
+        - 'There are no tests.'
+      choices:
+        - text: "There are three. You didn't see them because you reviewed the diff on
+                 your phone, in a taxi, at the airport."
+          goto: win2
+        - text: 'The types make it impossible to get wrong.'
+          goto: loss2
+        - text: "I'll add tests once the design settles."
+          goto: loss2b
+
+    win2:
+      lines:
+        - { who: giorgio, text: 'It was a BUS. And the tests were collapsed! GitHub
+                                 collapsed them! Not me!' }
+        - { who: chaxi, text: 'He did review it from a bus.' }
+        - { who: giorgio, text: 'At least I opened the diff! The man next to me
+                                 thought it was a crossword.',
+            emote: laugh }
+      set: [duel_point2]
+      goto: round3
+
+    loss2:
+      lines:
+        - 'The types make it impossible to get wrong. The types! My friend, the types
+           said this field was a string. Production said this field was the word
+           "null", spelled out, as a string.'
+        - { who: bigjohn, text: 'Twice.' }
+      goto: round3
+
+    loss2b:
+      lines:
+        - "'Once the design settles.' Nothing has ever settled. Not once. Not in the
+           entire history of this profession."
+      goto: round3
+
+    # -- Round 3 -------------------------------------------------------------
+    round3:
+      lines:
+        - 'You have used a library for this. It is nine hundred kilobytes. It formats
+           a date.'
+      choices:
+        - text: "It formats a date in thirty-eight locales, including the two our
+                 client actually sells in. Your hand-rolled version broke in March."
+          goto: win3
+        - text: 'Bundle size is a premature optimisation.'
+          goto: loss3
+        - text: 'I can write my own in twenty lines.'
+          goto: loss3b
+
+    win3:
+      lines:
+        - { who: giorgio, text: 'It broke in March because of the CLOCKS. That was the
+                                 CLOCKS. That was not me, that was ASTRONOMY.' }
+        - { who: bigjohn, text: 'Daylight saving is not astronomy. It is legislation.' }
+        - { who: giorgio, text: 'It is worse than astronomy!' }
+      set: [duel_point3]
+      goto: round4
+
+    loss3:
+      lines:
+        - 'Premature optimisation! They quote Knuth at me! In a BAR!'
+        - "The rest of that quote is 'in about 97% of cases', my friend, and this is
+           the other three percent, and it is nine hundred kilobytes, and it is on a
+           phone, in a tunnel, in Lanzarote."
+      goto: round4
+
+    loss3b:
+      lines:
+        - 'Twenty lines. Twenty!'
+        - "Everyone in this room has written those twenty lines. Together we have
+           written eleven thousand of those twenty lines, and every single one of them
+           is wrong about the year 1752."
+      goto: round4
+
+    # -- Round 4 -------------------------------------------------------------
+    round4:
+      lines:
+        - 'Why is this a microservice? It has one endpoint. It returns a boolean.'
+      choices:
+        - text: "It shouldn't be. You approved it as a microservice because the
+                 architecture diagram had a spare box and you wanted it to be
+                 symmetrical."
+          goto: win4
+        - text: 'It scales independently.'
+          goto: loss4
+        - text: 'The client asked for microservices.'
+          goto: loss4b
+
+    win4:
+      lines:
+        - { who: giorgio, text: '…' }
+        - { who: chaxi, text: 'The diagram WAS asymmetrical. He complained for a week.' }
+        - { who: giorgio, text: 'IT WAS UGLY! An ugly diagram is a bug! I stand by
+                                 this!', emote: laugh }
+      set: [duel_point4]
+      goto: round5
+
+    loss4:
+      lines:
+        - "It scales independently! To what? Two? It is a boolean. There are only two
+           of them. They come free."
+      goto: round5
+
+    loss4b:
+      lines:
+        - "The client asked for microservices. The client also asked for blockchain,
+           an app, and 'something with AI'."
+        - { who: chaxi, text: 'We built the one they needed and explained why. That is
+                               the job. That is the whole job.' }
+      goto: round5
+
+    # -- Round 5 -------------------------------------------------------------
+    round5:
+      lines:
+        - 'And this comment here. It says "TODO: fix properly". It is dated four years
+           ago. It has your name on it.'
+      choices:
+        - text: "You're right. I left debt without context or a ticket. I'll fix it
+                 now — and this time I'll explain what 'properly' means."
+          goto: win5
+        - text: 'It works, though.'
+          goto: loss5
+        - text: 'That was a different me. I have grown.'
+          goto: loss5b
+
+    win5:
+      lines:
+        - { who: giorgio, text: 'They admitted it! No excuses! What am I supposed to
+                                 do with that?' }
+        - { who: bigjohn, text: 'Approve the fix.' }
+        - { who: giorgio, text: 'This duel is RIGGED in favour of professional
+                                 behaviour!', emote: laugh }
+      set: [duel_point5]
+      goto: verdict
+
+    loss5:
+      lines:
+        - "'It works, though.' The five most expensive words in this industry, and you
+           have said them to a man holding a mug."
+      goto: verdict
+
+    loss5b:
+      lines:
+        - "'A different me.' Beautiful. Put that in the commit message. 'refactor:
+           I have grown.'"
+      goto: verdict
+
+    # -- Verdict -------------------------------------------------------------
+    verdict:
+      lines:
+        - { who: chaxi, text: 'Right. Stop.' }
+      # Any three correct replies earn the strong verdict. The last branch is
+      # the fallback for zero, one, or two.
+      branch:
+        - if: [duel_point1, duel_point2, duel_point3]
+          goto: verdict_good
+        - if: [duel_point1, duel_point2, duel_point4]
+          goto: verdict_good
+        - if: [duel_point1, duel_point2, duel_point5]
+          goto: verdict_good
+        - if: [duel_point1, duel_point3, duel_point4]
+          goto: verdict_good
+        - if: [duel_point1, duel_point3, duel_point5]
+          goto: verdict_good
+        - if: [duel_point1, duel_point4, duel_point5]
+          goto: verdict_good
+        - if: [duel_point2, duel_point3, duel_point4]
+          goto: verdict_good
+        - if: [duel_point2, duel_point3, duel_point5]
+          goto: verdict_good
+        - if: [duel_point2, duel_point4, duel_point5]
+          goto: verdict_good
+        - if: [duel_point3, duel_point4, duel_point5]
+          goto: verdict_good
+        - goto: verdict_ok
+
+    verdict_good:
+      lines:
+        - { who: chaxi, text: 'That was good. You pushed back with reasons, not
+                               volume. You were specific, and you did not fold the
+                               moment Giorgio became louder than the evidence.' }
+        - { who: giorgio, text: 'The evidence was intimidated!' }
+        - { who: bigjohn, text: 'You also knew when to hold your position and when to
+                                 drop it. Most bad reviews fail at one of those.' }
+        - { who: jaime, text: 'Second challenge complete. You crossed the island,
+                               survived five rounds with Giorgio, and nobody had to
+                               be removed from the bar.' }
+        - { who: javi, text: 'For clarity, none of that constitutes a hiring
+                              decision.' }
+        - { who: jaime, text: 'It proves they can spend five minutes disagreeing with
+                               Giorgio.' }
+        - { who: bigjohn, text: 'That is not nothing.' }
+        - { who: giorgio, text: 'It is a senior competency!', emote: laugh }
+        - { who: javi, text: 'It is not.' }
+      set: [won_duel]
+      goto: complete
+
+    verdict_ok:
+      lines:
+        - { who: chaxi, text: 'That was… educational. You lost some rounds. In at
+                               least one of them, your main strategy was hoping
+                               Giorgio would eventually run out of words.' }
+        - { who: giorgio, text: 'I NEVER—' }
+        - { who: bigjohn, text: 'He does not.' }
+        - { who: chaxi, text: 'But you stayed, answered every comment, and did not
+                               throw the laptop into the sea.' }
+        - { who: jaime, text: 'Second challenge complete.' }
+        - { who: javi, text: 'Completion was the requirement. Winning was mostly
+                              there to keep Giorgio occupied.' }
+        - { who: giorgio, text: 'I was conducting an assessment!' }
+        - { who: bigjohn, text: 'You were occupied.' }
+        - { who: chaxi, text: 'In a real disagreement, being wrong is not fatal.
+                               Refusing to notice can be.' }
+        - { who: jaime, text: 'Fortunately, this was not a real disagreement. It was
+                               five jokes wearing a pull request.' }
+      goto: complete
+
+    complete:
+      lines:
+        - { who: jaime, text: 'The game has now learned everything it is qualified
+                               to learn about you.' }
+        - { who: javi, text: 'Nothing.' }
+        - { who: jaime, text: 'Exactly. Go and talk to the hiring chat, and let the
+                               grown-ups take over.' }
+        - { who: javi, text: 'There are no grown-ups.' }
+        - { who: jaime, text: 'Fine. Let the hiring team take over.' }
+        - { who: giorgio, text: 'THE CHAT! GO! Before Jaime turns it into a form!',
+            emote: laugh }
+      set: [accepted_challenges]
+      action: { type: interstitial, id: to_the_chat }

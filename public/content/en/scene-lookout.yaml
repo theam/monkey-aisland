@@ -1,0 +1,189 @@
+# ---------------------------------------------------------------------------
+# Scene 1 — The lookout point above the harbour.
+# Coordinates are in room pixels. The room view is 320x144.
+# ---------------------------------------------------------------------------
+id: lookout
+name: The Lookout Point
+background: lookout
+width: 320
+camera: fixed
+music: lookout
+
+player_start:
+  at: [40, 134]
+  facing: right
+
+entries:
+  west:
+    at: [30, 136]
+    facing: right
+  from_dock:
+    at: [300, 132]
+    facing: left
+
+# The path. Everything the player can stand on.
+walkbox:
+  - [16, 122]
+  - [300, 120]
+  - [306, 141]
+  - [10, 141]
+
+# Characters shrink slightly as they walk away from the camera.
+scale:
+  top: 0.9
+  bottom: 1.0
+
+# No opening narration here on purpose: the intro has just said all of this,
+# and a second helping of voice-over before the player has touched anything is
+# two title screens' worth of being talked at. Add lines back here if you ever
+# drop the intro.
+
+actors:
+  - id: nayara
+    name: the lookout
+    at: [232, 133]
+    facing: left
+    dialog: nayara
+    verbs:
+      look:
+        say:
+          - "She has the exact expression of someone who has read four thousand CVs
+             that all say 'passionate about technology'."
+      pickup: "I'm going to guess that picking her up is not part of the process."
+      use: "She's a person, not a framework."
+      push: "Pushing the person who decides whether I get an interview. Bold strategy."
+      give: "I don't have anything she wants. That's the whole problem."
+
+hotspots:
+  - id: sign
+    name: the signpost
+    rect: [62, 90, 104, 44]
+    walk_to: [118, 134]
+    verbs:
+      look:
+        say:
+          - 'Two boards nailed to a post. The top one reads: "THE AGILE MONKEYS —
+             HIRING", with an arrow pointing down the cliff to the dock.'
+          - 'The bottom one reads: "NOWHERE", with an arrow pointing back the way I came.'
+          - 'Someone has scratched underneath: "We are hiring. Yes, still. Yes,
+             really." In a different hand: "Nowhere was nicer."'
+      pull: "It's been hammered into volcanic rock. By someone who was angry."
+      push: "The sign wobbles. Somewhere, a documentation page goes out of date."
+      pickup: "Stealing a signpost is how you become memorable for the wrong reasons."
+      use: "I use the sign to find out where I am. It works. That's what signs do."
+
+  - id: crates
+    name: the crates
+    rect: [164, 114, 34, 20]
+    walk_to: [176, 134]
+    verbs:
+      look:
+        say:
+          - "Two crates. Stencilled: 'LAPTOP CHARGERS — 240 UNITS — DO NOT OPEN UNTIL ONBOARDING'."
+      open:
+        say:
+          - "Locked. Naturally. The chargers are always in the last crate."
+        sfx: door
+      pull: "Heavier than they look. Like a legacy monolith, but honest about it."
+      pickup:
+        say: "I lift the small one and immediately put it down again. Ego intact. Mostly."
+        sfx: mug
+
+  - id: torch
+    name: the torch
+    rect: [280, 104, 16, 32]
+    walk_to: [272, 134]
+    verbs:
+      look:
+        say:
+          - "An actual burning torch, lighting the path down to the dock."
+          - "Excellent uptime. No dashboard. Nobody has ever been paged about it."
+      pickup: "Carrying an open flame into a bar full of rum. Let me think about that."
+      use: "Everything here is either wet, stone, or someone's livelihood."
+      push: "I'm not pushing over the only light source on a cliff at night."
+
+  - id: sea
+    name: the sea
+    rect: [66, 62, 200, 26]
+    verbs:
+      look:
+        say:
+          - "The Atlantic, doing its enormous patient thing."
+          - "Somewhere out there is a continent full of companies that would put me
+             through six rounds of interviews and then ghost me."
+      use: "I've had enough baths for one career."
+      pickup: "I try to pick up the sea. Results are as expected."
+      talk: "I talk to the ocean. It gives the same feedback as my last recruiter: none."
+
+  - id: moon
+    name: the moon
+    rect: [232, 12, 30, 26]
+    verbs:
+      look:
+        say:
+          - "A big honest moon. No subscription, no telemetry."
+          - "It has been shipping the same feature for four billion years without a single regression."
+      pickup: "Out of scope."
+      talk: "I would, but it's on call."
+
+  - id: wall
+    name: the low wall
+    rect: [72, 86, 194, 14]
+    walk_to: [150, 128]
+    verbs:
+      look:
+        say:
+          - "A dry stone wall, built by hand, still standing. No dependencies."
+      push: "I lean on it. It holds. I respect it enormously."
+      pull: "Dismantling load-bearing masonry: another thing I'll do only in staging."
+
+  - id: palms
+    name: the palm trees
+    rect: [8, 16, 66, 52]
+    verbs:
+      look:
+        say:
+          - "Canarian palms, leaning away from the trade winds like everyone in a
+             retrospective leaning away from blame."
+      pickup: "I am not strong enough to steal a tree. Yet."
+
+  - id: bananas
+    name: the banana plants
+    rect: [32, 66, 46, 34]
+    walk_to: [56, 128]
+    verbs:
+      look:
+        say:
+          - "Banana plants. Actual bananas, growing on a terrace cut into volcanic
+             rock, in February."
+          - "They're small and stubby and about four times better than the ones I buy
+             at home, which I resent."
+      pickup:
+        say:
+          - "I take one. It is excellent. I feel briefly that everything is going to
+             work out, which is exactly how these islands get you."
+        sfx: pickup
+      use: "I eat the banana. It does not make me a better engineer. Nothing does."
+
+  - id: teide
+    name: the mountain across the water
+    rect: [104, 30, 94, 40]
+    verbs:
+      look:
+        say:
+          - "That's Teide, over on Tenerife. Highest point in Spain. Very pretty."
+          - "People in Tenerife say it's the most beautiful thing in the Canary Islands.
+             People in Gran Canaria know the best thing about it is the view from here."
+          - "Both islands consider this a perfectly friendly observation, provided nobody
+             from the other island is present."
+      talk: "I greet the volcano. It has been on call for four thousand years and has
+             never once been thanked."
+      pickup: "Out of scope. Wildly out of scope."
+
+exits:
+  - id: to_dock
+    name: the path down to the dock
+    rect: [296, 98, 24, 46]
+    to: dock
+    entry: west
+    walk_to: [300, 133]

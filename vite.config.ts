@@ -1,0 +1,17 @@
+import { configDefaults, defineConfig } from 'vitest/config'
+
+export default defineConfig({
+  // Relative base so the build works from any subpath (GitHub Pages, S3 folder, …)
+  base: './',
+  server: { port: 5173, open: false },
+  build: {
+    target: 'es2020',
+    outDir: 'dist',
+    assetsDir: 'assets',
+    sourcemap: false,
+  },
+  test: {
+    // Agent worktrees under .claude/ hold their own copies of the tests.
+    exclude: [...configDefaults.exclude, '.claude/**'],
+  },
+})

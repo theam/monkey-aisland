@@ -1,0 +1,303 @@
+# ---------------------------------------------------------------------------
+# Interface strings, speakers, the sarcastic fallback lines, and the hiring-chat copy.
+# ---------------------------------------------------------------------------
+
+# The 3x3 verb grid, in the original's column-major order:
+#   Give      Pick up   Use
+#   Open      Look at   Push
+#   Close     Talk to   Pull
+# col/row are grid positions; key is the keyboard shortcut.
+verbs:
+  - { id: give,   label: Give,      col: 0, row: 0, key: g, prep: to }
+  - { id: open,   label: Open,      col: 0, row: 1, key: o }
+  - { id: close,  label: Close,     col: 0, row: 2, key: c }
+  - { id: pickup, label: Pick up,   col: 1, row: 0, key: p }
+  - { id: look,   label: Look at,   col: 1, row: 1, key: l }
+  - { id: talk,   label: Talk to,   col: 1, row: 2, key: t }
+  - { id: use,    label: Use,       col: 2, row: 0, key: u, prep: with }
+  - { id: push,   label: Push,      col: 2, row: 1, key: s }
+  - { id: pull,   label: Pull,      col: 2, row: 2, key: y }
+
+# "walk" is the implicit verb: click the ground and you walk there.
+default_verb: walk
+
+sentence:
+  walk_to: Walk to
+  to: to
+  with: with
+  idle: Walk to
+
+# How long a line of dialogue stays on screen before it advances itself. Lines
+# always move on their own — clicking just skips ahead.
+#
+# The time is PROPORTIONAL to the length of the line, which is the whole point:
+# a long line needs longer. Raise perChar if people say it reads too fast.
+#
+# Keep `max` well above your longest line. If it ever starts clamping, the
+# longest lines get the *least* time per character and become unreadable, which
+# is exactly the bug this replaced.
+pacing:
+  perChar: 55      # ms per character — 55 is about 18 characters a second
+  base: 800        # time to notice the text before you start reading
+  perLine: 220     # extra per wrapped line, for the eye movement
+  min: 1200        # short lines still get a beat
+  max: 12000       # a backstop for a runaway line, not a normal limit
+
+# ---------------------------------------------------------------------------
+# The start screen: the first thing anyone sees. The press that leaves it is
+# also the gesture browsers demand before audio may play, which is why the
+# music is already running by the time the title card appears.
+# ---------------------------------------------------------------------------
+start:
+  wordmark: 'the agile monkeys.'
+  prompt: 'PRESS START'
+  hint: '(click, tap, or press any key)'
+  footer: 'a hiring game for engineers'
+
+# ---------------------------------------------------------------------------
+# The title card and intro. Plays itself: the reveal is timed to the theme's
+# slow opening and hands over to the game exactly when the tune proper drops
+# (keep ends_at equal to audio.files.theme.intro_end).
+# ---------------------------------------------------------------------------
+title:
+  lines:
+    # The original opened with "Lucasfilm Games presents". So do we.
+    - { text: 'THE AGILE MONKEYS PRESENT', y: 12, scale: 1, color: moon0 }
+    - { text: 'THE',     y: 30, scale: 2, color: moon0 }
+    - { text: 'MONKEY',  y: 44, scale: 4, color: moon2 }
+    - { text: 'AISLAND', y: 72, scale: 4, color: fire5 }
+  subtitle: 'A pirate hiring game. No actual monkeys were consulted.'
+  skip_hint: '(click to skip)'
+  # No narration over the title card: it is a title card, and the theme is
+  # doing the work. Captions can be added back here — each is
+  # `{ at: <seconds since the intro started>, text: '…' }` and shows until the
+  # next one is due — but the intro reads better without them.
+  roll: []
+  fade_out_at: 7.9
+  ends_at: 10.031      # matches audio.files.theme.intro_end in game.yaml
+
+labels:
+  skip: '(click to skip)'
+  # The way out that is added to the bottom of every set of dialogue options,
+  # so no conversation can trap the player.
+  leave: "Actually, I've said enough."
+  item_arehucas: bottle of Arehucas
+  item_cv: your CV
+  item_chicken: rubber chicken with a pulley in the middle
+  item_lanyard: expired conference lanyard
+  item_sticker: laptop sticker
+
+# Every speaker gets a colour, exactly like the original.
+speakers:
+  player:   { name: You,        color: sayPlayer }
+  narrator: { name: '',         color: sayNarrator }
+  nayara:   { name: Nayara,     color: sayNayara }
+  giorgio:  { name: Giorgio,    color: sayGiorgio }
+  bigjohn:  { name: Big-John,   color: sayBigJohn }
+  chaxi:    { name: Chaxiraxi,  color: sayChaxi }
+  jaime:    { name: Jaime,      color: sayJaime }
+  javi:     { name: Javi,       color: sayJavi }
+  patilla:  { name: El Patilla, color: sayBarman }
+
+# ---------------------------------------------------------------------------
+# Fallback responses. Used whenever a hotspot has nothing specific to say for a
+# verb. %s is replaced with the thing's name, %i with the item you were using.
+# These rotate in order, so they never repeat twice in a row.
+# ---------------------------------------------------------------------------
+defaults:
+  look:
+    - "It's %s. I'm going to need more context than that."
+    - "I look at %s. %s looks back. Neither of us learns anything."
+    - "Nothing about %s explains why I have no job."
+    - "I've reviewed pull requests with less going on than %s."
+    - "%s. Adequate. Ships on Friday."
+  talk:
+    - "I try talking to %s. It responds like a stakeholder in August."
+    - "%s says nothing. Refreshing, honestly."
+    - "I don't speak to %s until it has read the ticket."
+  pickup:
+    - "I can't pick up %s. My hands are full of ambition."
+    - "If I take %s, that's theft. Fun, but theft."
+    - "%s is load-bearing. Probably. Nobody knows. Nobody documented it."
+    - "I try to lift %s and immediately understand my limits as an engineer."
+  open:
+    - "%s doesn't open. Like a support ticket."
+    - "I can't open %s. There's no API."
+  close:
+    - "%s is already as closed as my last four applications."
+    - "You can't close %s. You can only migrate it."
+  push:
+    - "I push %s. Nothing moves. Some of it moves back."
+    - "I push %s straight to production. Nothing happens, which is the best case."
+  pull:
+    - "I pull %s. It requires two approvals and a passing build."
+    - "%s won't budge. It's waiting on review."
+  use:
+    - "I can't use %s. I've read the docs. There are no docs."
+    - "%s isn't that kind of tool. Neither am I, most days."
+    - "Using %s here would be what my last tech lead called 'creative'."
+  use_with:
+    - "Using %i on %s would be a hack. I'd have to write about it on my blog."
+    - "%i and %s. Two great things that go absolutely nowhere together."
+    - "That's a lot of integration work for a joke that small."
+  give:
+    - "I'm not giving %s away. It's the only thing on my CV."
+    - "%s doesn't want %i. %s has standards."
+  default:
+    - "I have absolutely no idea what I'm doing, and I've been promoted for it before."
+  cant_reach:
+    - "I can't get there. There's a whole ocean of unpaid internships in the way."
+    - "Not from here. The pathfinding in my career is also like this."
+  cant_leave:
+    - "I'm not leaving. I came here to become the greatest engineer of all time."
+    - "Leave? I haven't even insulted anyone yet."
+
+# ---------------------------------------------------------------------------
+# Full-screen interstitials — the classic black screen with a Continue.
+# ---------------------------------------------------------------------------
+interstitials:
+  # The end of the game. The button is a plain link to the hiring chat, which
+  # carries its own privacy notice; the game collects nothing here.
+  to_the_chat:
+    kicker: Meanwhile, in the real world
+    paragraphs:
+      - 'You have survived two challenges from two monkeys in a bar.'
+      - 'In the original game, this is the part where you would spend
+         twenty hours solving a puzzle involving a rubber chicken.'
+      - 'We respect your time more than that. And, frankly, our legal
+         department has opinions about the chicken.'
+      - 'So: go and have the first conversation. It is a chat, not a form —
+         it asks what you have built, how you decide, and how you work
+         with AI. Answer as much or as little as you like. A human reads it
+         afterwards: the chat gathers the evidence, the hiring team draws the
+         conclusions.'
+      - 'You do not have to do it in one go. Open it, have a look, close the
+         tab. The chat keeps your conversation in this browser, so you can
+         come back tomorrow, next week, or after a suspicious amount of
+         thinking.'
+      - 'The game ends here, and opening the chat commits you to nothing. If
+         we both want to continue, the rest comes later, one step at a time.'
+    button: Open the hiring chat
+    cancel: not yet, I want to keep playing
+    note: 'Opens in a new tab. The island stays right here.'
+    aside: 'No cover letter. No nineteen required fields and a dropdown for your country.'
+
+  # Shown once the chat has opened in its new tab.
+  after_chat:
+    kicker: Talking
+    paragraphs:
+      - 'The chat is open in another tab. Take your time with it — it waits.
+         Close it whenever you like: when you come back, your conversation
+         is where you left it.'
+      - 'When you are done, the hiring team picks it up from there. They read
+         everything, which is both a promise and a warning.'
+      - 'You may now return to the island and continue insulting people.
+         The monkeys are still in the bar. They are always in the bar.'
+    button: Back to the island
+
+  credits:
+    kicker: The Monkey AIsland
+    paragraphs:
+      - 'Built by The Agile Monkeys as a recruiting stunt.'
+      - 'Every pixel is generated by code. Every sound effect is synthesised
+         at runtime. There is not a single image file in this repository.'
+      - 'The music is the exception. One audio file is carrying the entire
+         score, which is either efficient architecture or a cry for help.'
+      - 'Built with affection for the pirate adventures we played when we
+         should have been doing our homework.'
+    button: Fine
+
+
+# ---------------------------------------------------------------------------
+# What the game itself counts, and the switch to stop it. This is the privacy
+# notice for the game's analytics, opened by the Privacy link on the start
+# screen. The hiring chat has its own notice for what it collects; this one is
+# only about the game. Spain lets audience measurement run
+# without a consent banner only if players are told what is counted, so:
+#
+#   KEEP THIS TRUE. If you add an event to the game, say so here. If you
+#   switch analytics.provider in game.yaml, name the new processor below —
+#   the game refuses to load until you do.
+# ---------------------------------------------------------------------------
+counting:
+  link: Privacy
+  # The jokes live in the framing: kicker, status lines, buttons, intro and
+  # outro. The paragraphs in between carry the legal information and stay
+  # plain, because the law asks for clear language and a joke that blurs a
+  # fact would make the notice wrong. Keep that split when editing.
+  kicker: >-
+    A notice from the Suited Monkeys: the only monkeys on the island who own a
+    tie, and the only ones allowed to write this bit.
+  title: What this game counts
+  # First thing on the panel, and the only part that depends on this visit.
+  status:
+    'off': >-
+      Right now the game counts nothing at all. The Suited Monkeys have never
+      been this relaxed.
+    counting: >-
+      This visit is being counted: how far you get, never who you are.
+    opted_out: >-
+      This visit is not being counted. This browser remembers that choice, and
+      it is the only thing the game stores besides your sound settings. No
+      hard feelings. Well, hardly any.
+    browser_signal: >-
+      Your browser asked sites not to track you, so nothing about this visit
+      is counted. Nothing on this page can change that: no button, no small
+      print, no monkey. Only your browser's own setting can.
+  opt_out: Stop counting me
+  opt_in: Fine, count me again
+  # When the browser has said no, the rest folds away under this label: none
+  # of it applies to this visit.
+  folded: What we would count, if your browser let us
+  intro: >-
+    The Suited Monkeys require the next part to be read with a straight face.
+    Jokes resume at the bottom.
+  # {processor} becomes the line under `processors` for the configured provider.
+  paragraphs:
+    - >-
+      While you play, the game counts how far players get: that the page
+      opened (and whether on a touch screen, upright or sideways), that START
+      was pressed, whether the intro was watched or skipped, the first arrival
+      in each room, which conversations were opened, the duel won, and whether
+      the last screen led to the hiring chat. Each step carries how many
+      seconds into the visit it happened, the campaign tags of the link you
+      arrived by (the "utm_" part of an ad's address, the same for everyone
+      who clicked that ad), and the country you are connecting from.
+    - >-
+      It never records what you answer in a conversation. No cookies and no
+      fingerprinting: each visit gets a random number that is forgotten when
+      the tab closes, so we cannot recognise you next time or connect your
+      visit to the hiring chat. If you apply, the chat only learns that
+      someone arrived from the game, and the campaign tags of the link you
+      arrived by.
+    - >-
+      We do this to find where the game loses people and fix it, and to see
+      which campaigns and countries bring the players who get through it.
+      That is a legitimate interest (Article 6.1.f GDPR). The counts go to {processor},
+      which processes them on our behalf and may not use them for anything
+      else. Your IP address reaches it, as it does with any request. It is
+      used once to look up your country, nothing more precise, and then
+      discarded. We keep the counts for 12 months, then they are
+      deleted.
+    - >-
+      Because we cannot tell whose visit is whose, we cannot look yours up or
+      delete it later. We can stop counting it: use the switch at the top, or
+      turn on Global Privacy Control or Do Not Track in your browser.
+    - >-
+      Controller: THE AGILE MONKEYS S.L. (B76229087), Calle Canalejas 80,
+      5 C, 35003 Las Palmas de Gran Canaria, Spain.
+  outro: >-
+    That is the lot. The Suited Monkeys have loosened their ties and gone back
+    to estimating this notice in story points. It was a 13.
+  rights:
+    label: Exercise your data rights at
+    email: info@theagilemonkeys.com
+    complaint: You can also complain to the Spanish Data Protection Agency (AEPD).
+    complaint_url: https://www.aepd.es/
+  processors:
+    posthog: PostHog, on its EU cloud
+  close: Back to the island
+
+credits:
+  - 'The Agile Monkeys — Las Palmas de Gran Canaria'
+  - 'A pirate hiring game, made with affection.'

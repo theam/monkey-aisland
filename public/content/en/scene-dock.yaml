@@ -1,0 +1,184 @@
+# ---------------------------------------------------------------------------
+# Scene 2 — The dock. Wide room, the camera follows, you can only go left
+# (back to the lookout) or right (into El Patilla). In between: six boards
+# somebody has propped up along the pier, explaining The Agile Monkeys to
+# nobody in particular.
+# ---------------------------------------------------------------------------
+id: dock
+name: The Dock
+background: dock
+width: 720
+camera: follow
+music: dock
+
+player_start:
+  at: [40, 132]
+  facing: right
+
+entries:
+  west:
+    at: [40, 132]
+    facing: right
+  east:
+    at: [660, 132]
+    facing: left
+
+walkbox:
+  - [16, 121]
+  - [700, 119]
+  - [706, 141]
+  - [12, 142]
+
+scale:
+  top: 0.94
+  bottom: 1.0
+
+on_enter:
+  - once: true
+    lines:
+      - "A pier, a moored ship, and an art exhibition. On a dock. At night."
+      - "Someone in marketing is very proud of this."
+
+hotspots:
+  # --- the gallery: six boards, left to right --------------------------------
+  - id: board1
+    name: the first board
+    rect: [120, 58, 48, 42]
+    walk_to: [144, 132]
+    verbs:
+      look:
+        say:
+          - 'A painted board. At the top: "THE AGILE MONKEYS. FOUNDED IN 2012."'
+          - 'Below it: "MONKEY HOUSES: GRAN CANARIA. TENERIFE. MADRID."'
+          - 'In smaller letters: "Remote-first. The houses are for meeting people,
+             not proving that you own trousers."'
+      pickup: "It's nailed down. Somebody has done this before."
+
+  - id: board2
+    name: the second board
+    rect: [196, 58, 48, 42]
+    walk_to: [220, 132]
+    verbs:
+      look:
+        say:
+          - 'The second board reads: "AN AI ENGINEERING STUDIO. SPECIALISTS IN
+             REGULATED INDUSTRIES."'
+          - 'Below it: "We build for clients. We build our own products. Occasionally
+             we build something for ourselves and become our own most difficult client."'
+          - 'Someone has written underneath: "Legal reviewed this sign."'
+          - 'Someone from Legal has crossed out "reviewed" and written "became aware of".'
+      push: "It wobbles. The claim stays true, which is the important part."
+
+  - id: board3
+    name: the third board
+    rect: [272, 58, 48, 42]
+    walk_to: [296, 132]
+    verbs:
+      look:
+        say:
+          - 'A painting of an eBay parcel sailing across the Atlantic on a tiny pirate ship.'
+          - 'Underneath: "In 2015, eBay saw our work and invited us to help its
+             innovation team."'
+          - 'Below that: "Good work led organically to more good work: Rent the Runway,
+             Harvard, Bimba y Lola, and many others — most of them American."'
+          - 'Some very important clients are missing from the board.'
+          - "We could tell you who they are, but then we'd have to kill you."
+
+  - id: board4
+    name: the fourth board
+    rect: [348, 58, 48, 42]
+    walk_to: [372, 132]
+    verbs:
+      look:
+        say:
+          - 'The fourth board reads: "LOOK BEHIND YOU! A THREE-HEADED MONKEY!"'
+          - "I look behind me."
+          - "Nothing."
+          - 'When I turn back, someone has added: "Still works."'
+
+  - id: board5
+    name: the fifth board
+    rect: [424, 58, 48, 42]
+    walk_to: [448, 132]
+    verbs:
+      look:
+        say:
+          - 'A mostly empty board. At the top: "This sign was meant to be filled in by
+             our marketing team."'
+          - 'Below it: "Marketing wrote a strategy. Engineering had write access."'
+          - 'Then: "Engineering filled it with bananas instead."'
+          - "Underneath is a row of hand-drawn bananas."
+          - "The last one is in a different style. It has two circles underneath it and
+             is no longer fooling anyone."
+
+  - id: board6
+    name: the sixth board
+    rect: [500, 58, 48, 42]
+    walk_to: [524, 132]
+    verbs:
+      look:
+        say:
+          - 'The final board reads, in enormous letters: "WE ARE HIRING ENGINEERS.
+             A LOT OF THEM."'
+          - 'Underneath: "Yes, in the AI era. No, that is not a typo. This is probably
+             the only thing in this game that''s not a joke."'
+          - 'At the bottom: "We still believe the future of engineering will be shaped
+             by great engineers. They will simply have suspiciously fast colleagues."'
+        set: [saw_hiring_board]
+
+  - id: ship
+    name: the moored ship
+    rect: [552, 20, 130, 76]
+    walk_to: [600, 132]
+    verbs:
+      look:
+        say:
+          - "A three-masted ship, rigging creaking, name painted on the bow: 'LEGACY'."
+          - "She still sails. Nobody remembers how. Nobody dares refactor her."
+      use: "I'm not touching the rigging. That's a whole other job posting."
+      open: "You don't open a ship. A ship opens you, eventually."
+
+  - id: barrels
+    name: the barrels
+    rect: [612, 104, 40, 24]
+    walk_to: [606, 134]
+    verbs:
+      look:
+        say:
+          - "Barrels of Arehucas, stacked outside the bar with the confidence of a
+             company that has never had a stock-out."
+          - "The distillery up in Arucas has four thousand three hundred and eight of
+             these, and about three hundred are signed by whoever came through —
+             Julio Iglesias, Tom Jones, a king."
+          - "None of them are signed by an engineer. I find this personally motivating."
+      open:
+        say: "Sealed. There is a man inside the bar whose entire job is these barrels."
+        sfx: mug
+      pickup: "Full barrels weigh more than my career prospects."
+
+  - id: sea_dock
+    name: the harbour water
+    rect: [80, 62, 460, 30]
+    verbs:
+      look:
+        say:
+          - "Black water, orange lamp reflections, one plastic bottle nobody will
+             mention in the brochure."
+      use: "Swimming to the interview is a strong signal, but the wrong one."
+
+exits:
+  - id: to_lookout
+    name: the path back up
+    rect: [0, 78, 20, 66]
+    to: lookout
+    entry: from_dock
+    walk_to: [16, 132]
+
+  - id: to_bar
+    name: 'the door of El Patilla'
+    # The doorway plus the lit steps in front of it, so the whole approach is
+    # clickable rather than just the dark rectangle of the door itself.
+    rect: [658, 62, 62, 74]
+    to: bar
+    entry: west
+    walk_to: [688, 136]

@@ -1,0 +1,11 @@
+{
+  // The tests, the Worker and the build config, which run on Node or in
+  // Cloudflare's runtime rather than in the browser. tsconfig.json covers the
+  // game itself; `npm run typecheck` runs both.
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "lib": ["ES2023", "DOM", "DOM.Iterable"],
+    "types": ["node", "vite/client"]
+  },
+  "include": ["tests", "worker", "vite.config.ts"]
+}
