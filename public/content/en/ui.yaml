@@ -217,7 +217,8 @@ interstitials:
 #
 #   KEEP THIS TRUE. If you add an event to the game, say so here. If you
 #   switch analytics.provider in game.yaml, name the new processor below —
-#   the game refuses to load until you do.
+#   the game refuses to load until you do. If the game moves off Cloudflare,
+#   rename the host in the third paragraph: nothing checks that one.
 # ---------------------------------------------------------------------------
 counting:
   link: Privacy
@@ -273,11 +274,14 @@ counting:
     - >-
       We do this to find where the game loses people and fix it, and to see
       which campaigns and countries bring the players who get through it.
-      That is a legitimate interest (Article 6.1.f GDPR). The counts go to {processor},
-      which processes them on our behalf and may not use them for anything
-      else. Your IP address reaches it, as it does with any request. It is
-      used once to look up your country, nothing more precise, and then
-      discarded. We keep the counts for 12 months, then they are
+      That is a legitimate interest (Article 6.1.f GDPR). The game is hosted
+      on Cloudflare, which serves its pages and receives the counts on our
+      behalf. Like any web host it sees your IP address, and it uses it to
+      deliver the game and to limit how many counts one address can send. It
+      passes the counts on to {processor}, which processes them on our behalf
+      and may not use them for anything else. Your IP address reaches it too.
+      It is used there once to look up your country, nothing more precise,
+      and then discarded. We keep the counts for 12 months, then they are
       deleted.
     - >-
       Because we cannot tell whose visit is whose, we cannot look yours up or

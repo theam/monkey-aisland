@@ -383,22 +383,18 @@ whether you muted the sound and, if you asked, that you don't want your visits c
 
 ## The two challenges
 
-The monkeys announce two trials and then send the player to the hiring chat. The trials are
-designed, not implemented — deliberately, because the point of the prototype is the
-funnel. When you do build them:
+The monkeys set two challenges and then send the player to the hiring chat. Both are
+game challenges, not hiring stages: nothing in the game assesses anyone or makes a
+hiring decision, and the game says so.
 
-1. **The Loose Plank** — a small repository and a true story about it misbehaving in
-   production. Find the cause, fix it, write ten lines on why. Ninety minutes, not a
-   weekend. AI assistance explicitly allowed, because the thing being measured is
-   whether you can tell when the confident answer is wrong.
-2. **The Second Opinion** — a code review duel. Review a pull request that was broken
-   on purpose in an interesting way, then defend the review for thirty minutes against
-   someone pushing back. Nobody fails for being wrong; people fail for defending a
-   position they stopped believing in four comments ago.
+1. **Showing up.** Proving you actually want to talk to us. Crossing the island and
+   asking two monkeys about a job counts, so it is passed by the time it is announced.
+2. **The code review duel.** Giorgio leaves five questionable review comments; you pick
+   one of three replies to each. Three good replies earn the better verdict, but
+   finishing is all it takes to reach the chat.
 
-A playable prototype of the second one is already in the game: talk to Giorgio and offer
-to review some code with him, outside. It lives entirely in `dialog-duel.yaml`, so
-adding rounds is a copy-paste job.
+Ask Jaime or Javi about the challenges to start. The duel lives entirely in
+`dialog-duel.yaml`, so adding rounds is a copy-paste job.
 
 ---
 
@@ -456,10 +452,11 @@ Two things worth knowing if you touch the engine:
 
 ## Credits and the legal bit
 
-*The Secret of Monkey Island* is © LucasArts and its current owners. The art, the
-writing, the engine and the synthesised scores here are all original — no assets, code
-or long verbatim text from the original are reproduced. If a joke lands, it is because
-Ron Gilbert, Tim Schafer and Dave Grossman taught a generation how to write them.
+*The Secret of Monkey Island* is © LucasArts and its current owners, and this game is
+not affiliated with, endorsed by or sponsored by any of them. The art, the writing, the
+engine and the synthesised scores here are all original — no assets, code or long
+verbatim text from the original are reproduced. If a joke lands, it is because Ron
+Gilbert, Tim Schafer and Dave Grossman taught a generation how to write them.
 
 Arehucas is a real rum from Arucas, Gran Canaria, made since 1884.
 

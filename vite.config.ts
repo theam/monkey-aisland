@@ -11,7 +11,7 @@ export default defineConfig({
     sourcemap: false,
   },
   test: {
-    // Agent worktrees under .claude/ hold their own copies of the tests.
-    exclude: [...configDefaults.exclude, '.claude/**'],
+    // Hidden directories hold tool state and spare working copies, not tests.
+    exclude: [...configDefaults.exclude, '**/.*/**'],
   },
 })
