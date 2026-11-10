@@ -415,10 +415,11 @@ Cloudflare Workers Static Assets, deployed by [the CI workflow](.github/workflow
 | Manual run | a deploy of any branch, tag or commit SHA, for rolling back |
 
 The deploy job runs in the GitHub `production` environment, which only `main` may deploy
-from, and needs two secrets there: `CLOUDFLARE_API_TOKEN` (Cloudflare's *Edit Cloudflare
-Workers* template, scoped to the one account) and `CLOUDFLARE_ACCOUNT_ID`. Pull requests
-never see them. The custom domain is attached in the Cloudflare dashboard, not in
-`wrangler.jsonc`, so a deploy never touches it.
+from. It needs the secret `CLOUDFLARE_API_TOKEN` there (Cloudflare's *Edit Cloudflare
+Workers* template, scoped to the one account) and the variable `CLOUDFLARE_ACCOUNT_ID`,
+which is an identifier rather than a credential. Pull requests never see either. The
+custom domain is attached in the Cloudflare dashboard, not in `wrangler.jsonc`, so a
+deploy never touches it.
 
 ---
 
